@@ -1,7 +1,7 @@
 package org.example.backend.services;
 
 import jakarta.transaction.Transactional;
-import org.example.backend.dtos.RegDTO;
+import org.example.backend.dtos.RegisterRequest;
 import org.example.backend.model.Role;
 import org.example.backend.model.User;
 import org.example.backend.repository.UserRepository;
@@ -10,18 +10,18 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
-public class UserRegisterService {
+public class UserRegService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    public UserRegisterService(UserRepository userRepository, PasswordEncoder passwordEncoder){
+    public UserRegService(UserRepository userRepository, PasswordEncoder passwordEncoder){
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
     }
 
     @Transactional
-    public User registerUser(RegDTO request){
+    public User registerUser(RegisterRequest request){
         if(userRepository.existsByEmail(request.getEmail())){
             throw new RuntimeException("Email already registered");
         }
