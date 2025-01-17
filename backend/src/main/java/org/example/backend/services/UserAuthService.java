@@ -30,6 +30,6 @@ public class UserAuthService {
             throw new RuntimeException("Invalid email or password");
         }
 
-        return  jwtUtils.generateToken(user.get().getUsername());
+        return  jwtUtils.generateToken(user.get().getUsername(), user.get().getRole());
     }
 }
