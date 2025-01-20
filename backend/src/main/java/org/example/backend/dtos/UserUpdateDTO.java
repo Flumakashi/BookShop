@@ -1,7 +1,5 @@
 package org.example.backend.dtos;
 
-
-import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -9,11 +7,8 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class LoginRequest {
-
-    @NotBlank(message = "Email can't be empty")
+public class UserUpdateDTO {
+    private String username;
     private String email;
-
-    @NotBlank(message = "Password can't be empty")
     private String password;
 }

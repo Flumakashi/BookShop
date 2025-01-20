@@ -1,0 +1,83 @@
+package org.example.backend.controllers;
+
+import org.example.backend.dtos.BookDTO;
+import org.example.backend.dtos.BookRequest;
+import org.example.backend.services.BookService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.ResourceBundle;
+
+@RestController
+@RequestMapping("/api/books")
+public class BookController {
+
+    private final BookService bookService;
+
+    @Autowired
+    public BookController(BookService bookService){
+        this.bookService = bookService;
+    }
+
+    @GetMapping
+    public List<BookDTO> getAllBooks() {
+        return bookService.getAllBooks();
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<BookDTO> getBookById(@PathVariable Long id){
+        return bookService.getBookById(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+
+    @PostMapping
+    @PreAuthorize("hasRole('USER')")
+    public ResponseEntity<BookDTO> createBook(
+            @RequestBody BookRequest bookRequest,
+            Authentication authentication){
+        String username = authentication.getName();
+        return bookService.createBook(bookRequest, username)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.badRequest().build());
+    }
+
+    @PutMapping("/{id}")
+    @PreAuthorize("hasRole('USER')")
+    public ResponseEntity<BookDTO> updateBook(
+            @PathVariable Long id,
+            @RequestBody BookRequest bookRequest,
+            Authentication authentication){
+        String username = authentication.getName();
+        boolean isAdmin = authentication.getAuthorities().stream()
+                .anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("ROLE_ADMIN"));
+
+        try {
+            return bookService.updateBook(id, bookRequest, username, isAdmin)
+                    .map(ResponseEntity::ok)
+                    .orElse(ResponseEntity.notFound().build());
+        } catch (AccessDeniedException e){
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
+    }
+
+    @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('USER')")
+    public ResponseEntity<Void> deleteBook(@PathVariable Long id, Authentication authentication){
+        String username = authentication.getName();
+        boolean isAdmin = authentication.getAuthorities().stream()
+                .anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("ROLE_ADMIN"));
+
+        if(bookService.deleteBook(id, username, isAdmin)) {
+            return ResponseEntity.noContent().build();
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+}
