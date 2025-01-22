@@ -21,7 +21,7 @@ public class JwtUtils {
     public String generateToken(String username, Role role) {
         return Jwts.builder()
                 .setSubject(username)
-                .claim("role", role)
+                .claim("role", role.name())
                 .setIssuedAt(new Date())
                 .setExpiration(new Date((new Date()).getTime() + jwtExpirationMs))
                 .signWith(key)
@@ -38,13 +38,14 @@ public class JwtUtils {
                 .getSubject();
     }
 
-    public String extractRole(String token){
-        return Jwts.parserBuilder()
+    public Role extractRole(String token){
+        String role = Jwts.parserBuilder()
                 .setSigningKey(key)
                 .build()
                 .parseClaimsJws(token)
                 .getBody()
                 .get("role", String.class); // Получаем роль из токена
+        return Role.valueOf(role);
     }
 
     //Проверка токена

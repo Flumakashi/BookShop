@@ -23,10 +23,10 @@ public class UserRegService {
     @Transactional
     public User registerUser(RegisterRequest request){
         if(userRepository.existsByEmail(request.getEmail())){
-            throw new RuntimeException("Email already registered");
+            throw new IllegalArgumentException("Email already registered");
         }
         if (userRepository.existsByUsername(request.getUsername())){
-            throw new RuntimeException("Username is already exist");
+            throw new IllegalArgumentException("Username is already exist");
         }
 
         User user = new User();

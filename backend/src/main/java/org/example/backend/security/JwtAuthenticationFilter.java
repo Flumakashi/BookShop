@@ -5,6 +5,7 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.example.backend.model.Role;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -20,7 +21,6 @@ import java.io.IOException;
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final JwtUtils jwtUtils;
-
 
     @Autowired
     public JwtAuthenticationFilter (JwtUtils jwtUtils){
@@ -43,10 +43,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             if (jwtUtils.validateToken(jwt)){
+                Role role = jwtUtils.extractRole(jwt);
                 UserDetails userDetails = User.builder()
                         .username(username)
                         .password("")
-                        .roles("role")
+                        .roles(role.name())
                         .build();
                 UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken (
                         userDetails, null, userDetails.getAuthorities());

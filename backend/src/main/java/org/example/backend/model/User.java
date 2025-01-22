@@ -8,8 +8,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 @Entity
@@ -38,20 +38,18 @@ public class User {
     private Role role;
 
     @Column(updatable = false)
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date createdAt;
+    private LocalDateTime createdAt;
 
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date updatedAt;
+    private LocalDateTime updatedAt;
 
     @PrePersist
     protected void onCreate() {
-        createdAt = new Date();
+        createdAt = LocalDateTime.now();
     }
 
     @PreUpdate
     protected void onUpdate() {
-        updatedAt = new Date();
+        updatedAt = LocalDateTime.now();
     }
 
 

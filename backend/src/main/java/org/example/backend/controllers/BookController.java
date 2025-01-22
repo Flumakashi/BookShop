@@ -12,7 +12,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.ResourceBundle;
 
 @RestController
 @RequestMapping("/api/books")
@@ -79,5 +78,11 @@ public class BookController {
         } else {
             return ResponseEntity.notFound().build();
         }
+    }
+
+    @GetMapping("/test-auth")
+    public ResponseEntity<String> testAuth(Authentication authentication) {
+        String roles = authentication.getAuthorities().toString();
+        return ResponseEntity.ok("Ваши роли: " + roles);
     }
 }

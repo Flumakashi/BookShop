@@ -3,16 +3,13 @@ package org.example.backend.services;
 import org.example.backend.dtos.BookRequest;
 import org.example.backend.dtos.BookDTO;
 import org.example.backend.model.Book;
-import org.example.backend.model.User;
 import org.example.backend.repository.BookRepository;
 import org.example.backend.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.nio.file.AccessDeniedException;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;

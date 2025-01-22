@@ -5,6 +5,7 @@ import org.example.backend.model.User;
 import org.example.backend.repository.UserRepository;
 import org.example.backend.security.JwtUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -27,7 +28,7 @@ public class UserAuthService {
         Optional<User> user = userRepository.findByEmail(request.getEmail());
 
         if (user.isEmpty() || !passwordEncoder.matches(request.getPassword(), user.get().getPassword())){
-            throw new RuntimeException("Invalid email or password");
+            throw new BadCredentialsException("Invalid email or password");
         }
 
         return  jwtUtils.generateToken(user.get().getUsername(), user.get().getRole());

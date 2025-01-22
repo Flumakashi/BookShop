@@ -8,7 +8,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "books")
@@ -38,27 +38,25 @@ public class Book {
     @Column(nullable = false)
     private double price;
 
-    @Lob
+    @Column(columnDefinition = "TEXT")
     private String description;
 
-    @Lob
+    @Column(columnDefinition = "TEXT")
     private String photoPath;
 
     @Column(updatable = false)
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date createdAt;
+    private LocalDateTime createdAt;
 
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date updatedAt;
+    private LocalDateTime updatedAt;
 
     @PrePersist
     protected void onCreate() {
-        createdAt = new Date();
+        createdAt = LocalDateTime.now();
     }
 
     @PreUpdate
     protected void onUpdate() {
-        updatedAt = new Date();
+        updatedAt = LocalDateTime.now();
     }
 
     @ManyToOne
