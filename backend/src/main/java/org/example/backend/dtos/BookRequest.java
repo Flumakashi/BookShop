@@ -7,7 +7,9 @@ import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.example.backend.model.Book;
 import org.example.backend.model.Genre;
+import org.example.backend.model.User;
 
 @Data
 @NoArgsConstructor
@@ -36,4 +38,17 @@ public class BookRequest {
 
     @Size(max = 255, message = "Photo path can't be longer than 255 characters")
     private String photoPath;
+
+    public Book toBook(User user) {
+        Book book = new Book();
+        book.setTitle(this.title);
+        book.setAuthor(this.author);
+        book.setIsbn(this.isbn);
+        book.setGenre(this.genre);
+        book.setPrice(this.price);
+        book.setDescription(this.description);
+        book.setPhotoPath(this.photoPath);
+        book.setUser(user);
+        return book;
+    }
 }

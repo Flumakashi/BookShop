@@ -3,7 +3,7 @@ package org.example.backend.dtos;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.example.backend.model.Role;
+import org.example.backend.model.User;
 
 @Data
 @AllArgsConstructor
@@ -12,5 +12,14 @@ public class UserDTO {
     private Long id;
     private String username;
     private String email;
-    private Role role;
+    private String role;
+
+    public static UserDTO fromEntity(User user) {
+        UserDTO dto = new UserDTO();
+        dto.setId(user.getId());
+        dto.setUsername(user.getUsername());
+        dto.setEmail(user.getEmail());
+        dto.setRole(user.getRole().name());
+        return dto;
+    }
 }

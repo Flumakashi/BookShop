@@ -2,6 +2,7 @@ package org.example.backend.services;
 
 import jakarta.transaction.Transactional;
 import org.example.backend.dtos.RegisterRequest;
+import org.example.backend.dtos.UserDTO;
 import org.example.backend.model.Role;
 import org.example.backend.model.User;
 import org.example.backend.repository.UserRepository;
@@ -21,7 +22,7 @@ public class UserRegService {
     }
 
     @Transactional
-    public User registerUser(RegisterRequest request){
+    public UserDTO registerUser(RegisterRequest request){
         if(userRepository.existsByEmail(request.getEmail())){
             throw new IllegalArgumentException("Email already registered");
         }
@@ -35,6 +36,7 @@ public class UserRegService {
         user.setPassword(passwordEncoder.encode(request.getPassword()));
         user.setRole(Role.USER);
 
-        return userRepository.save(user);
+        User savedUser = userRepository.save(user);
+        return new UserDTO(savedUser.getId(), savedUser.getUsername(), savedUser.getEmail(), savedUser.getRole().name());
     }
 }

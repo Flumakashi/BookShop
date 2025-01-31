@@ -3,7 +3,7 @@ package org.example.backend.controllers;
 
 import jakarta.validation.Valid;
 import org.example.backend.dtos.RegisterRequest;
-import org.example.backend.model.User;
+import org.example.backend.dtos.UserDTO;
 import org.example.backend.services.UserRegService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -23,12 +23,12 @@ public class UserRegController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<String> registerUser(@RequestBody @Valid RegisterRequest request){
+    public ResponseEntity<UserDTO> registerUser(@RequestBody @Valid RegisterRequest request){
         try {
-            User user = userRegService.registerUser(request);
-            return ResponseEntity.ok("User registered:" + user.getUsername());
+            UserDTO userDTO = userRegService.registerUser(request);
+            return ResponseEntity.ok(userDTO);
         } catch (RuntimeException e){
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.badRequest().body(new UserDTO());
         }
     }
 }

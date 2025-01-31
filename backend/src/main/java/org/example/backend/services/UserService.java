@@ -5,10 +5,10 @@ import org.example.backend.dtos.UserUpdateDTO;
 import org.example.backend.model.User;
 import org.example.backend.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Optional;
 
@@ -28,10 +28,17 @@ public class UserService {
         return userRepository.findById(id).map(this::convertToDTO);
     }
 
+    public UserDTO getCurrentUser(String username) {
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("Пользователь не найден"));
+        return UserDTO.fromEntity(user);  // Используем статический метод fromEntity
+    }
+
+
     public Optional<UserDTO> updateUser (Long id, UserUpdateDTO userUpdateDTO, String currentUsername, boolean isAdmin) {
         return userRepository.findById(id).map(user -> {
             if(!isAdmin && !user.getUsername().equals(currentUsername)){
-                throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You can only update your own profile!");
+                throw new AccessDeniedException("You can only update your own profile!");
             }
 
             user.setUsername(userUpdateDTO.getUsername());
@@ -46,16 +53,16 @@ public class UserService {
     public boolean deleteUser(Long id, String currentUsername, boolean isAdmin) {
         return userRepository.findById(id).map(user -> {
             if (!isAdmin && !user.getUsername().equals(currentUsername)) {
-                throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You can only delete your own profile!");
+                throw new AccessDeniedException("You can only delete your own profile!");
             }
 
             userRepository.delete(user);
             return true;
-        }).orElse(false);
+        }).isPresent();
     }
 
     private UserDTO convertToDTO(User user) {
-        return new UserDTO(user.getId(), user.getUsername(), user.getEmail(), user.getRole());
+        return new UserDTO(user.getId(), user.getUsername(), user.getEmail(), user.getRole().name());
     }
 }
 

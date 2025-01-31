@@ -2,6 +2,7 @@ package org.example.backend.controllers;
 
 import org.example.backend.dtos.BookDTO;
 import org.example.backend.dtos.BookRequest;
+import org.example.backend.model.Genre;
 import org.example.backend.services.BookService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -25,8 +26,9 @@ public class BookController {
     }
 
     @GetMapping
-    public List<BookDTO> getAllBooks() {
-        return bookService.getAllBooks();
+    public ResponseEntity<List<BookDTO>> getAllBooks() {
+        List<BookDTO> books = bookService.getAllBooks();
+        return ResponseEntity.ok(books);
     }
 
     @GetMapping("/{id}")
@@ -35,6 +37,7 @@ public class BookController {
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
+
 
     @PostMapping
     @PreAuthorize("hasRole('USER')")
@@ -78,6 +81,14 @@ public class BookController {
         } else {
             return ResponseEntity.notFound().build();
         }
+    }
+
+    @GetMapping("/search")
+    public List<BookDTO> searchBooks(
+            @RequestParam(required = false) String title,
+            @RequestParam(required = false) String author,
+            @RequestParam(required = false) Genre genre){
+        return bookService.searchBooks(title, author, genre);
     }
 
     @GetMapping("/test-auth")
